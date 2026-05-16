@@ -8,11 +8,11 @@ This directory provides OpenCode integration for the AI Dev Team Framework. Open
 
 ```
 .opencode/
-├── opencode.json         # OpenCode configuration (commands + plugin list)
+├── opencode.json         # OpenCode plugin + provider config ONLY (no command definitions)
 ├── SKILL.md              # This file
 ├── plugins/              # JavaScript plugin modules
 │   └── ai-dev-team.js   # Main plugin — session hooks + custom tools
-└── commands/             # Markdown command definitions
+└── commands/             # Markdown command definitions (template comes from file content)
     ├── orchestrator.md   # /orchestrator — activate Orchestrator mode
     ├── spec.md          # /spec — create a new spec
     ├── plan.md          # /plan — break spec into tasks
@@ -21,6 +21,8 @@ This directory provides OpenCode integration for the AI Dev Team Framework. Open
     ├── audit.md         # /audit — three-round self-audit
     └── agent.md         # /agent — switch to specialized agent
 ```
+
+**Important:** Do NOT define commands in `opencode.json` — the `template` field is mandatory in OpenCode's schema and commands are already defined as Markdown files in `commands/`. Defining commands in `opencode.json` without a `template` field causes `ConfigInvalidError`.
 
 ## Installation
 
