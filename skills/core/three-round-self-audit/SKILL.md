@@ -46,7 +46,7 @@ Check:
 - [ ] Edge cases are handled (empty, null, overflow)
 - [ ] Error messages are helpful
 - [ ] Security implications considered
-- [ ] No debug code or TODOs in production
+- [ ] No debug code or incomplete items in production
 
 **If issues found:** Go back to implementation. Fix before Round 3.
 

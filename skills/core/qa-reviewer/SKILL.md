@@ -112,7 +112,7 @@ A change can only be merged when:
 2. All HIGH severity issues are fixed
 3. MEDIUM issues are acknowledged and tracked
 4. Tests cover all new behavior
-5. No debug code or TODOs left in production code
+5. No debug code or incomplete items left in production code
 
 ## Pitfalls
 

@@ -10,25 +10,33 @@ An **Orchestrator-First** AI development team where a coordinating agent dispatc
 
 ## Architecture
 
+```mermaid
+graph TD
+    HP[You (Human Partner)]
+    ORC[Orchestrator Agent<br/>understanding → planning → dispatch]
+    EA[Engineering Agents<br/>frontend · backend · fullstack · qa · devops · sre · security]
+    DA[Design Agents<br/>ux-architect · ui-designer · visual-designer]
+    CS[Core Skills<br/>orchestrator · spec-driven · tdd · qa-reviewer · planning · three-round-self-audit]
+    ES[Engineering Skills<br/>frontend-patterns · backend-patterns · api-design · database · diagnose · tdd-deep · testing]
+    DS[Design Skills<br/>ux-research · visual-design]
+    PP[Platform Plugins<br/>.claude · .opencode · .copilot]
+
+    HP --> ORC
+    ORC --> EA
+    ORC --> DA
+    ORC --> CS
+    EA --> ES
+    DA --> DS
+    ORC --> PP
+
+    EA <-->|parallel worktrees| EA
+    EA <-->|spec review| ORC
+    DA <-->|spec review| ORC
 ```
-You (Human Partner)
-    │
-    ▼
-┌─────────────────────────────────────┐
-│          Orchestrator Agent          │  ← Central coordinator
-│  (understanding → planning → dispatch)│
-└──────────┬──────────┬───────────────┘
-           │          │
-    ┌──────┴──┐ ┌────┴────────┐
-    ▼         ▼ ▼             ▼
-Engineering  Design  QA & Review  Planning
-  Agents    Agents    Agents      Skills
-    │         │         │           │
-    └─────────┴─────────┴───────────┘
-                     │
-              Subagents per task
-            (fresh context each time)
-```
+
+### Core Principle: Orchestrator First
+
+The Orchestrator never codes directly. It decomposes, delegates, and reviews.
 
 ## Quick Start
 
@@ -154,6 +162,26 @@ cp -r .opencode ~/.config/opencode/  # Linux
 ```bash
 cp -r .copilot ~/.config/Claude/  # VS Code Copilot
 ```
+
+## Comparison with Other Frameworks
+
+| Dimension | This Framework | agency-agents | superpower | OpenSpec |
+|-----------|---------------|---------------|------------|----------|
+| Focus | Full team simulation | Agent roles | Skill-based workflows | Spec artifacts |
+| Orchestration | Orchestrator-First | Fixed roles | Dispatcher | Plan-driven |
+| Skill system | Composable SKILL.md | N/A | Superpowers | N/A |
+| Platform plugins | Claude/OpenCode/Copilot | CLI only | VS Code | Any |
+| QA gates | Built-in three-round audit | Manual | Verification skill | Review step |
+| git worktree | First-class | No | Yes | No |
+
+## Contributing
+
+See [CLAUDE.md](CLAUDE.md) for full AI agent instructions. For humans:
+
+1. **Add a skill** → `skills/<category>/<name>/SKILL.md` with YAML frontmatter
+2. **Add an agent** → `agents/<domain>/<name>/AGENT.md` with YAML frontmatter
+3. **Validate** → `./scripts/test-structure.sh` (must pass: 0 errors)
+4. **Document changes** → Add entry to `.ai-dev/CHANGES.md`
 
 ## License
 
