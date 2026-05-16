@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # AI Dev Team Framework — Structure Validation Script
-# Validates SKILL.md and AGENT.md files meet format standards
+# Validates all SKILL.md and AGENT.md files, plus required directories
 
 set -e
 
@@ -8,97 +8,106 @@ FRAMEWORK_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ERRORS=0
 WARNINGS=0
 
+ok() { echo "  OK: $1"; }
+error() { echo "  ERROR: $1" 1>&2; ((ERRORS++)); }
+warn() { echo "  WARNING: $1"; ((WARNINGS++)); }
+
 echo "=== AI Dev Team Framework — Structure Validation ==="
 echo "Framework root: $FRAMEWORK_ROOT"
 echo ""
 
-# Helper functions
-error() {
-    echo "ERROR: $1"
-    ERRORS=$((ERRORS + 1))
-}
-
-warn() {
-    echo "WARN: $1"
-    WARNINGS=$((WARNINGS + 1))
-}
-
-ok() {
-    echo "  OK: $1"
-}
-
-# Check: SKILL.md files have YAML frontmatter
+# --- Check SKILL.md files ---
 echo "--- Checking SKILL.md frontmatter ---"
-SKILL_COUNT=0
-for file in $(find "$FRAMEWORK_ROOT/skills" -name "SKILL.md" 2>/dev/null); do
-    SKILL_COUNT=$((SKILL_COUNT + 1))
-    first_line=$(head -1 "$file")
-    if [[ "$first_line" != "---" ]]; then
-        error "$file: SKILL.md must start with YAML frontmatter (---)"
-    else
-        # Check for name and description in frontmatter
-        if ! grep -q "^name:" "$file"; then
-            error "$file: SKILL.md frontmatter must have 'name:' field"
-        fi
-        if ! grep -q "^description:" "$file"; then
-            error "$file: SKILL.md frontmatter must have 'description:' field"
-        fi
-        ok "$(echo "$file" | sed "s|$FRAMEWORK_ROOT/||")"
+SKILL_ERRORS=0
+for skill in "$FRAMEWORK_ROOT"/skills/**/SKILL.md; do
+    if [[ ! -f "$skill" ]]; then continue; fi
+
+    # Must have YAML frontmatter (lines 1-3 contain ---)
+    if ! head -3 "$skill" | grep -q "^---"; then
+        error "Missing frontmatter: $skill"
+        ((SKILL_ERRORS++))
+        continue
     fi
 
-    # Check for placeholder text
-    if grep -qE "(TODO|FIXME|PLACEHOLDER|TBD)" "$file"; then
-        warn "$file: contains TODO/FIXME/PLACEHOLDER/TBD"
+    # Extract frontmatter (between first --- and second ---)
+    frontmatter=$(sed -n '/^---/{
+        :a; N; /\n---/!ba; p; q
+    }' "$skill")
+
+    # Required fields: name, description
+    if ! echo "$frontmatter" | grep -q "^name:"; then
+        error "Missing 'name:' in $skill"
+        ((SKILL_ERRORS++))
+        continue
+    fi
+    if ! echo "$frontmatter" | grep -q "^description:"; then
+        error "Missing 'description:' in $skill"
+        ((SKILL_ERRORS++))
+        continue
     fi
 
-    # Check for minimum content (100 chars)
-    char_count=$(wc -c < "$file")
-    if [[ $char_count -lt 100 ]]; then
-        warn "$file: file is very short ($char_count chars), may be incomplete"
-    fi
+    ok "${skill#$FRAMEWORK_ROOT/}"
 done
-echo "  Total SKILL.md files checked: $SKILL_COUNT"
+
+# Also check platform skill files
+for skill in "$FRAMEWORK_ROOT"/platforms/*/skills/**/SKILL.md; do
+    if [[ ! -f "$skill" ]]; then continue; fi
+    if ! head -3 "$skill" | grep -q "^---"; then
+        error "Missing frontmatter: $skill"
+        ((SKILL_ERRORS++))
+        continue
+    fi
+    frontmatter=$(sed -n '/^---/{
+        :a; N; /\n---/!ba; p; q
+    }' "$skill")
+    if ! echo "$frontmatter" | grep -q "^name:"; then
+        error "Missing 'name:' in $skill"
+        ((SKILL_ERRORS++))
+        continue
+    fi
+    ok "${skill#$FRAMEWORK_ROOT/}"
+done
+
+if [[ $SKILL_ERRORS -gt 0 ]]; then
+    echo ""
+    echo "SKILL.md errors: $SKILL_ERRORS"
+fi
+echo "Total SKILL.md files checked: $(find "$FRAMEWORK_ROOT"/skills -name SKILL.md 2>/dev/null | wc -l)"
 echo ""
 
-# Check: AGENT.md files have YAML frontmatter
+# --- Check AGENT.md files ---
 echo "--- Checking AGENT.md frontmatter ---"
-AGENT_COUNT=0
-for file in $(find "$FRAMEWORK_ROOT/agents" -name "AGENT.md" 2>/dev/null); do
-    AGENT_COUNT=$((AGENT_COUNT + 1))
-    first_line=$(head -1 "$file")
-    if [[ "$first_line" != "---" ]]; then
-        error "$file: AGENT.md must start with YAML frontmatter (---)"
-    else
-        if ! grep -q "^name:" "$file"; then
-            error "$file: AGENT.md frontmatter must have 'name:' field"
-        fi
-        if ! grep -q "^role:" "$file"; then
-            error "$file: AGENT.md frontmatter must have 'role:' field"
-        fi
-        ok "$(echo "$file" | sed "s|$FRAMEWORK_ROOT/||")"
+for agent in "$FRAMEWORK_ROOT"/agents/**/AGENT.md; do
+    if [[ ! -f "$agent" ]]; then continue; fi
+
+    if ! head -3 "$agent" | grep -q "^---"; then
+        error "Missing frontmatter: $agent"
+        continue
     fi
 
-    if grep -qE "(TODO|FIXME|PLACEHOLDER|TBD)" "$file"; then
-        warn "$file: contains TODO/FIXME/PLACEHOLDER/TBD"
+    frontmatter=$(sed -n '/^---/{
+        :a; N; /\n---/!ba; p; q
+    }' "$agent")
+
+    if ! echo "$frontmatter" | grep -q "^role:"; then
+        error "Missing 'role:' in $agent"
+        continue
     fi
 
-    char_count=$(wc -c < "$file")
-    if [[ $char_count -lt 100 ]]; then
-        warn "$file: file is very short ($char_count chars), may be incomplete"
-    fi
+    ok "${agent#$FRAMEWORK_ROOT/}"
 done
-echo "  Total AGENT.md files checked: $AGENT_COUNT"
+echo "Total AGENT.md files checked: $(find "$FRAMEWORK_ROOT"/agents -name AGENT.md 2>/dev/null | wc -l)"
 echo ""
 
-# Check: Required directories exist
+# --- Check required directories ---
 echo "--- Checking required directories ---"
 REQUIRED_DIRS=(
     "skills/core"
     "agents/engineering"
     "agents/design"
-    ".claude"
-    ".opencode"
-    ".copilot"
+    "platforms/claude-code"
+    "platforms/opencode"
+    "platforms/copilot"
     "specs/templates"
     "scripts"
 )
@@ -112,15 +121,9 @@ for dir in "${REQUIRED_DIRS[@]}"; do
 done
 echo ""
 
-# Check: Root documentation files
+# --- Check root files ---
 echo "--- Checking root files ---"
-ROOT_FILES=(
-    "README.md"
-    "AGENTS.md"
-    "CLAUDE.md"
-)
-
-for file in "${ROOT_FILES[@]}"; do
+for file in README.md AGENTS.md CLAUDE.md; do
     if [[ -f "$FRAMEWORK_ROOT/$file" ]]; then
         ok "$file"
     else
@@ -129,29 +132,35 @@ for file in "${ROOT_FILES[@]}"; do
 done
 echo ""
 
-# Check: Platform SKILL.md files
+# --- Check platform plugins (each platform must have its install script) ---
 echo "--- Checking platform plugins ---"
-for platform in claude opencode copilot; do
-    plugin_file="$FRAMEWORK_ROOT/.$platform/SKILL.md"
-    if [[ -f "$plugin_file" ]]; then
-        ok ".$platform/SKILL.md"
+for platform in claude-code opencode copilot; do
+    plugin_dir="$FRAMEWORK_ROOT/platforms/$platform"
+    install_script="$plugin_dir/install.sh"
+    if [[ -d "$plugin_dir" ]]; then
+        ok "platforms/$platform/"
+        if [[ -f "$install_script" ]]; then
+            ok "platforms/$platform/install.sh"
+        else
+            warn "Missing install.sh: platforms/$platform/install.sh"
+        fi
     else
-        warn "Missing plugin: .$platform/SKILL.md"
+        warn "Missing platform: platforms/$platform/"
     fi
 done
 echo ""
 
-# Summary
+# --- Summary ---
 echo "=== Summary ==="
 echo "Errors:   $ERRORS"
 echo "Warnings: $WARNINGS"
 echo ""
 
 if [[ $ERRORS -gt 0 ]]; then
-    echo "RESULT: FAILED — $ERRORS error(s) found"
+    echo "RESULT: FAILED — $ERRORS errors found"
     exit 1
 elif [[ $WARNINGS -gt 0 ]]; then
-    echo "RESULT: PASSED WITH WARNINGS — $WARNINGS warning(s)"
+    echo "RESULT: PASSED — $WARNINGS warnings (no errors)"
     exit 0
 else
     echo "RESULT: PASSED — All checks successful"

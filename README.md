@@ -19,7 +19,7 @@ graph TD
     CS["Core Skills<br/>orchestrator · spec-driven · tdd · qa-reviewer · planning · three-round-self-audit"]
     ES["Engineering Skills<br/>frontend-patterns · backend-patterns · api-design · database · diagnose · tdd-deep · testing"]
     DS["Design Skills<br/>ux-research · visual-design"]
-    PP["Platform Plugins<br/>.claude · .opencode · .copilot"]
+    PP["Platform Plugins<br/>platforms/claude-code · platforms/opencode · platforms/copilot"]
 
     HP --> ORC
     ORC --> EA
@@ -38,18 +38,6 @@ graph TD
 
 The Orchestrator never codes directly. It decomposes, delegates, and reviews.
 
-## Quick Start
-
-```bash
-# Clone the framework into your project
-git clone https://github.com/YOUR_USER/ai-dev-team-framework.git .ai-dev-team
-
-# Run the install script
-cd .ai-dev-team && ./scripts/install.sh
-```
-
-Or copy the `.claude/`, `.opencode/`, or `.copilot/` directories into your project root.
-
 ## Directory Structure
 
 ```
@@ -57,37 +45,30 @@ ai-dev-team-framework/
 ├── README.md                    # This file
 ├── CLAUDE.md                    # For AI coding agents
 ├── AGENTS.md                    # For AI agent-to-agent communication
-├── skills/
+├── skills/                      # Tool-agnostic skill definitions
 │   ├── core/                   # Core workflow skills
-│   │   ├── orchestrator/        # Orchestrator role
-│   │   ├── spec-driven/        # Spec-driven development
-│   │   ├── subagent-driven/    # Subagent dispatch pattern
-│   │   ├── tdd/               # Test-driven development
-│   │   ├── qa-reviewer/       # QA review gate
-│   │   ├── planning/           # Task breakdown
-│   │   └── three-round-self-audit/
 │   ├── engineering/            # Engineering skills
-│   └── design/                 # Design skills
-├── agents/
-│   ├── orchestrator/           # Orchestrator agent definition
-│   ├── engineering/           # Engineering agents
-│   │   ├── frontend-developer/
-│   │   ├── backend-developer/
-│   │   ├── fullstack-developer/
-│   │   ├── qa-engineer/
-│   │   └── devops-engineer/
-│   └── design/                 # Design agents
-│       ├── ux-architect/
-│       ├── ui-designer/
-│       └── visual-designer/
+│   ├── design/                 # Design skills
+│   └── mattpocock/            # Upstream integration manifest
+├── agents/                     # Agent definitions
+│   ├── orchestrator/
+│   ├── engineering/
+│   └── design/
 ├── specs/
-│   └── templates/              # OpenSpec-style spec templates
-├── .claude/                    # Claude Code plugin
-├── .opencode/                  # OpenCode plugin
-├── .copilot/                  # VS Code Copilot plugin
+│   └── templates/
+├── platforms/                  # Tool-specific integrations (isolated — no cross-contamination)
+│   ├── claude-code/            # Claude Code plugin
+│   ├── copilot/                # VS Code Copilot plugin
+│   └── opencode/               # OpenCode plugin
+├── .ai-dev/                    # Framework self-maintenance
 └── scripts/
-    └── install.sh             # Cross-platform install
+    ├── install.sh
+    └── test-structure.sh       # YAML frontmatter validator (0 errors)
 ```
+
+## Quick Start
+
+Each platform has its own isolated integration in `platforms/`. See the relevant section below.
 
 ## Core Workflow
 
@@ -147,62 +128,50 @@ Core skills are tool-agnostic and work with any AI coding harness:
 
 ## Multi-Platform Support
 
+Each platform is fully isolated in `platforms/<name>/`. No shared directories, no cross-contamination.
+
 ### Claude Code
 
 ```bash
-# Test locally (from project directory)
-claude --plugin-dir ./ai-dev-team-framework/.claude
+# Project-level
+cp -r platforms/claude-code/skills/ /path/to/project/.claude/skills/ai-dev-team/
 
-# Publish to marketplace for team use
-# See: https://code.claude.com/docs/en/plugins
+# Or run install script
+./platforms/claude-code/install.sh /path/to/project
 ```
 
-The `.claude/` directory contains a complete Claude Code plugin with slash commands
-(`/orchestrator`, `/spec`, `/qa`, `/audit`) and skill definitions that reference the
-parent framework's `skills/core/` content.
+Skills are standalone Claude Code skills. Auto-discovered from `~/.claude/skills/`.
+
+See `platforms/claude-code/SKILL.md` for full documentation.
 
 ### VS Code Copilot
 
+```bash
+# Project-level
+cp -r platforms/copilot/commands/ /path/to/project/.claude/
+cp -r platforms/claude-code/skills/ /path/to/project/.claude/skills/ai-dev-team/
+
+# Or run install script
+./platforms/copilot/install.sh /path/to/project
+```
+
 VS Code Copilot auto-discovers Agent Skills from `.claude/skills/` (project-level) or `~/.claude/skills/` (user-level).
 
-```bash
-# Option 1: Copy skills to your project (recommended)
-cp -r .claude/skills/ /path/to/your-project/.claude/skills/
-
-# Option 2: Copy skills to your home directory (global)
-cp -r .claude/skills/ ~/.claude/skills/
-```
-
-For monorepos, add to VS Code settings:
-
-```json
-{
-  "chat.agentSkillsLocations": [".claude/skills", ".github/skills"],
-  "chat.useCustomizationsInParentRepositories": true
-}
-```
-
-**Skills available:** `/orchestrator`, `/spec`, `/qa`, `/audit`
-
-The `.copilot/` directory provides plugin distribution helpers and documentation. The `.claude-plugin/plugin.json` is for **Claude Code** plugin format, not VS Code Copilot.
+See `platforms/copilot/SKILL.md` for full documentation.
 
 ### OpenCode
 
-The `.opencode/` directory provides OpenCode CLI integration via **JavaScript plugins** and **Markdown commands**.
-
 ```bash
-# Option 1: Project-level (recommended)
-cp -r .opencode/ /path/to/your-project/
+# Project-level
+cp -r platforms/opencode/. /path/to/project/.opencode/
 
-# Option 2: Global installation
-cp -r .opencode/ ~/.config/opencode/
+# Or run install script
+./platforms/opencode/install.sh /path/to/project
 ```
 
-**Commands available** (after installation): `/orchestrator`, `/spec`, `/plan`, `/build`, `/qa`, `/audit`
+**Commands available:** `/orchestrator`, `/spec`, `/plan`, `/build`, `/qa`, `/audit`, `/agent`
 
-OpenCode plugin format: JavaScript modules in `.opencode/plugins/` + Markdown command files in `.opencode/commands/`. The plugin also registers custom tools: `ai-dev-team.list-skills`, `ai-dev-team.read-skill`, `ai-dev-team.read-agent`, `ai-dev-team.list-specs`.
-
-See `.opencode/SKILL.md` for full documentation.
+See `platforms/opencode/SKILL.md` for full documentation.
 
 ## Comparison with Other Frameworks
 
@@ -211,7 +180,7 @@ See `.opencode/SKILL.md` for full documentation.
 | Focus | Full team simulation | Agent roles | Skill-based workflows | Spec artifacts |
 | Orchestration | Orchestrator-First | Fixed roles | Dispatcher | Plan-driven |
 | Skill system | Composable SKILL.md | N/A | Superpowers | N/A |
-| Platform plugins | Claude/OpenCode/Copilot | CLI only | VS Code | Any |
+| Platform plugins | Isolated `platforms/` dirs | CLI only | VS Code | Any |
 | QA gates | Built-in three-round audit | Manual | Verification skill | Review step |
 | git worktree | First-class | No | Yes | No |
 
@@ -221,8 +190,9 @@ See [CLAUDE.md](CLAUDE.md) for full AI agent instructions. For humans:
 
 1. **Add a skill** → `skills/<category>/<name>/SKILL.md` with YAML frontmatter
 2. **Add an agent** → `agents/<domain>/<name>/AGENT.md` with YAML frontmatter
-3. **Validate** → `./scripts/test-structure.sh` (must pass: 0 errors)
-4. **Document changes** → Add entry to `.ai-dev/CHANGES.md`
+3. **Add a platform plugin** → `platforms/<name>/` (fully isolated)
+4. **Validate** → `./scripts/test-structure.sh` (must pass: 0 errors)
+5. **Document changes** → Add entry to `.ai-dev/CHANGES.md`
 
 ## License
 

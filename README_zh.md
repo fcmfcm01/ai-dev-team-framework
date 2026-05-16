@@ -19,7 +19,7 @@ graph TD
     CS["核心技能<br/>orchestrator · spec-driven · tdd · qa-reviewer · planning · three-round-self-audit"]
     ES["工程技能<br/>frontend-patterns · backend-patterns · api-design · database · diagnose · tdd-deep · testing"]
     DS["设计技能<br/>ux-research · visual-design"]
-    PP["平台插件<br/>.claude · .opencode · .copilot"]
+    PP["平台插件<br/>platforms/claude-code · platforms/opencode · platforms/copilot"]
 
     HP --> ORC
     ORC --> EA
@@ -38,18 +38,6 @@ graph TD
 
 编排 Agent **永远不直接写代码**。它只做三件事：拆解（decompose）、分派（delegate）、审查（review）。
 
-## 快速上手
-
-```bash
-# 将框架克隆到项目中
-git clone https://github.com/YOUR_USER/ai-dev-team-framework.git .ai-dev-team
-
-# 运行安装脚本
-cd .ai-dev-team && ./scripts/install.sh
-```
-
-或者直接将 `.claude/`、`.opencode/` 或 `.copilot/` 目录复制到你的项目根目录。
-
 ## 目录结构
 
 ```
@@ -58,56 +46,30 @@ ai-dev-team-framework/
 ├── README_zh.md                  # 本文件（中文版）
 ├── CLAUDE.md                      # AI 编码 Agent 的工作指南
 ├── AGENTS.md                      # Agent 之间协作的协议定义
-├── skills/                        # 技能库（Composable Skills）
+├── skills/                        # 与工具无关的技能定义
 │   ├── core/                      # 核心工作流技能
-│   │   ├── orchestrator/          # 编排者角色定义
-│   │   ├── spec-driven/           # 规格驱动开发
-│   │   ├── subagent-driven/       # 子 Agent 分派模式
-│   │   │   └── SKILL.md          # ← 真实 superpower 内容（12k chars）
-│   │   ├── tdd/                  # 测试驱动开发（Iron Law）
-│   │   │   └── SKILL.md          # ← 真实 superpower 内容（9.8k chars）
-│   │   ├── systematic-debugging/  # 4 阶段根因调试
-│   │   ├── qa-reviewer/          # QA 质量门禁
-│   │   ├── planning/              # 任务分解
-│   │   ├── three-round-self-audit/ # 交付前三省吾身
-│   │   └── ...                   # 17 个核心技能
-│   ├── engineering/               # 工程技能（来自 mattpocock/skills + 自研）
-│   │   ├── diagnose/             # ← 真实 mattpocock 内容（7.1k chars）
-│   │   ├── tdd-deep/            # ← 真实 mattpocock 内容 + 5 个 ref 文件
-│   │   ├── improve-codebase-architecture/ # ← 真实 mattpocock 内容 + 3 refs
-│   │   ├── frontend-patterns/    # React/Vue 组件模式
-│   │   ├── backend-patterns/    # API 设计 + 数据库模式
-│   │   ├── api-design/          # RESTful / GraphQL 设计规范
-│   │   ├── database-patterns/   # 索引策略、事务边界
-│   │   └── devops-patterns/     # CI/CD、容器化
-│   └── design/                   # 设计技能
-│       ├── ux-research/         # 用户研究方法、人物画像
-│       └── visual-design/       # 色彩理论、字体排版、布局原则
-├── agents/                       # Agent 定义库
-│   ├── engineering/              # 工程 Agent（来自 agency-agents）
-│   │   ├── frontend-developer/
-│   │   ├── backend-developer/
-│   │   ├── fullstack-developer/
-│   │   ├── qa-engineer/
-│   │   ├── devops-engineer/
-│   │   ├── security-engineer/
-│   │   └── sre/
-│   └── design/                  # 设计 Agent（来自 agency-agents）
-│       ├── ux-architect/
-│       ├── ui-designer/
-│       └── visual-designer/
-├── specs/                       # 规格模板（OpenSpec 风格）
+│   ├── engineering/               # 工程技能
+│   ├── design/                    # 设计技能
+│   └── mattpocock/               # 上游集成清单
+├── agents/                        # Agent 定义
+│   ├── orchestrator/
+│   ├── engineering/
+│   └── design/
+├── specs/
 │   └── templates/
-├── .claude/                     # Claude Code 插件
-├── .opencode/                   # OpenCode 插件
-├── .copilot/                    # VS Code Copilot 插件
-├── .ai-dev/                     # 框架自身维护规范
-│   ├── CHANGES.md               # 变更日志
-│   └── specs/                   # 框架自身重构规格
+├── platforms/                    # 工具专属集成（完全隔离，无交叉污染）
+│   ├── claude-code/              # Claude Code 插件
+│   ├── copilot/                  # VS Code Copilot 插件
+│   └── opencode/                 # OpenCode 插件
+├── .ai-dev/                      # 框架自身维护
 └── scripts/
-    ├── install.sh               # 跨平台安装脚本
-    └── test-structure.sh        # 框架结构验证（0 errors, 0 warnings）
+    ├── install.sh
+    └── test-structure.sh         # YAML frontmatter 验证（0 errors）
 ```
+
+## 快速上手
+
+每个平台都有独立的集成，见下方各章节。
 
 ## 核心工作流
 
@@ -128,7 +90,6 @@ ai-dev-team-framework/
 ### 子 Agent 模式
 
 计划中的每个任务都会获得一个**全新的子 Agent**，具备：
-
 - **隔离的上下文**（不继承编排者的会话历史）
 - **完整的任务目标 + 验收标准**
 - **加载对应的技能文档**
@@ -143,8 +104,6 @@ ai-dev-team-framework/
 | `fullstack-developer` | 端到端功能 | API + UI 一体化需求 |
 | `qa-engineer` | 测试策略、自动化 | 测试套件、E2E、覆盖率 |
 | `devops-engineer` | CI/CD、基础设施 | 部署、流水线、容器化 |
-| `security-engineer` | 安全审计、威胁建模 | 安全审查、渗透测试 |
-| `sre` | 可靠性、监控 | SLO/SLI、告警、容灾 |
 
 ## 设计 Agent
 
@@ -170,61 +129,46 @@ ai-dev-team-framework/
 
 ## 多平台支持
 
+每个平台在 `platforms/<name>/` 中完全隔离，互不污染。
+
 ### Claude Code
 
 ```bash
-# 本地测试（从项目目录运行）
-claude --plugin-dir ./ai-dev-team-framework/.claude
+# 项目级
+cp -r platforms/claude-code/skills/ /path/to/project/.claude/skills/ai-dev-team/
 
-# 发布到 marketplace 供团队使用
-# 详见：https://code.claude.com/docs/en/plugins
+# 或运行安装脚本
+./platforms/claude-code/install.sh /path/to/project
 ```
 
-`.claude/` 目录包含完整的 Claude Code 插件，提供斜杠命令
-(`/orchestrator`、`/spec`、`/qa`、`/audit`)，技能定义引用父框架的 `skills/core/` 内容。
+Skills 从 `~/.claude/skills/` 自动发现。详见 `platforms/claude-code/SKILL.md`。
 
 ### VS Code Copilot
 
-VS Code Copilot 从 `.claude/skills/`（项目级）或 `~/.claude/skills/`（用户级）自动发现 Agent Skills。
-
 ```bash
-# 方式 1：复制到目标项目（推荐）
-cp -r .claude/skills/ /path/to/your-project/.claude/skills/
+# 项目级
+cp -r platforms/copilot/commands/ /path/to/project/.claude/
+cp -r platforms/claude-code/skills/ /path/to/project/.claude/skills/ai-dev-team/
 
-# 方式 2：复制到主目录（全局可用）
-cp -r .claude/skills/ ~/.claude/skills/
+# 或运行安装脚本
+./platforms/copilot/install.sh /path/to/project
 ```
 
-对于 monorepo，在 VS Code 设置中添加：
-
-```json
-{
-  "chat.agentSkillsLocations": [".claude/skills", ".github/skills"],
-  "chat.useCustomizationsInParentRepositories": true
-}
-```
-
-**可用技能：** `/orchestrator`、`/spec`、`/qa`、`/audit`
-
-`.copilot/` 目录提供插件分发辅助工具和文档。`.claude-plugin/plugin.json` 适用于 **Claude Code** 插件格式，而非 VS Code Copilot。
+VS Code Copilot 从 `.claude/skills/`（项目级）或 `~/.claude/skills/`（用户级）自动发现 Agent Skills。详见 `platforms/copilot/SKILL.md`。
 
 ### OpenCode
 
-`.opencode/` 通过 **JavaScript 插件**和 **Markdown 命令文件**提供 OpenCode CLI 集成。
-
 ```bash
-# 方式一：项目级（推荐）
-cp -r .opencode/ /path/to/your-project/
+# 项目级
+cp -r platforms/opencode/. /path/to/project/.opencode/
 
-# 方式二：全局安装
-cp -r .opencode/ ~/.config/opencode/
+# 或运行安装脚本
+./platforms/opencode/install.sh /path/to/project
 ```
 
-**可用命令**（安装后）：`/orchestrator`、`/spec`、`/plan`、`/build`、`/qa`、`/audit`
+**可用命令：** `/orchestrator`、`/spec`、`/plan`、`/build`、`/qa`、`/audit`、`/agent`
 
-OpenCode 插件格式：JavaScript 模块位于 `.opencode/plugins/`，Markdown 命令文件位于 `.opencode/commands/`。插件还注册了自定义工具：`ai-dev-team.list-skills`、`ai-dev-team.read-skill`、`ai-dev-team.read-agent`、`ai-dev-team.list-specs`。
-
-详见 `.opencode/SKILL.md`。
+详见 `platforms/opencode/SKILL.md`。
 
 ## 与其他框架的对比
 
@@ -233,7 +177,7 @@ OpenCode 插件格式：JavaScript 模块位于 `.opencode/plugins/`，Markdown 
 | 定位 | 完整团队模拟 | Agent 角色定义 | 技能驱动工作流 | 规格文档规范 |
 | 编排方式 | 编排优先 | 固定角色 | 分派器 | 计划驱动 |
 | 技能系统 | 可组合 SKILL.md | 无 | Superpowers | 无 |
-| 平台插件 | Claude/OpenCode/Copilot | 仅 CLI | VS Code | 任意 |
+| 平台插件 | `platforms/` 隔离目录 | 仅 CLI | VS Code | 任意 |
 | 质量门禁 | 内置三省吾身审计 | 手动 | Verification 技能 | Review 步骤 |
 | git worktree | 第一等公民 | 否 | 是 | 否 |
 
@@ -243,8 +187,9 @@ OpenCode 插件格式：JavaScript 模块位于 `.opencode/plugins/`，Markdown 
 
 1. **添加技能** → `skills/<分类>/<名称>/SKILL.md`，包含 YAML frontmatter
 2. **添加 Agent** → `agents/<领域>/<名称>/AGENT.md`，包含 YAML frontmatter
-3. **验证格式** → `./scripts/test-structure.sh`（必须通过：0 errors）
-4. **记录变更** → 在 `.ai-dev/CHANGES.md` 中添加条目
+3. **添加平台插件** → `platforms/<名称>/`（完全隔离）
+4. **验证格式** → `./scripts/test-structure.sh`（必须通过：0 errors）
+5. **记录变更** → 在 `.ai-dev/CHANGES.md` 中添加条目
 
 ## 许可
 

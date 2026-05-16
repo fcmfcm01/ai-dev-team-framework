@@ -14,7 +14,7 @@ This is the **source of truth** for AI agents that are modifying or extending th
 
 The framework has three layers:
 
-1. **Platform Plugins** (`.claude/`, `.opencode/`, `.copilot/`) — Tool-specific conventions
+1. **Platform Plugins** (`platforms/claude-code/`, `platforms/opencode/`, `platforms/copilot/`) — Tool-specific, fully isolated from each other
 2. **Core Skills** (`skills/core/`) — Tool-agnostic workflow skills
 3. **Domain Agents** (`agents/engineering/`, `agents/design/`) — Specialized agent definitions
 
@@ -37,9 +37,10 @@ The framework has three layers:
 
 ### Adding a New Platform Plugin
 
-1. Create `.<platform>/SKILL.md` (platform conventions)
-2. Create `agents/<domain>/` adapters if needed
-3. Add to `README.md` compatibility table
+1. Create `platforms/<name>/` with isolated structure (skills/, commands/, plugins/ as needed)
+2. Do NOT mix platform-specific files with core framework dirs (skills/, agents/)
+3. Add an install.sh script for easy adoption
+4. Add to `README.md` compatibility table
 
 ## Quality Gates
 

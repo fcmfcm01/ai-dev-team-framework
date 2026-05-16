@@ -21,35 +21,55 @@ EXAMPLES:
   $0                           # Install all plugins to current directory
   $0 --tool claude-code        # Install Claude Code plugin only
   $0 --tool opencode --path ~/myproject  # Install OpenCode plugin to ~/myproject
-  $0 --uninstall               # Remove all installed plugins
+  $0 --uninstall               # Remove all installed plugins from current directory
 
 EOF
 }
 
+# Each tool installs to its own standard location.
+# No tool writes to the same directory as another — no cross-contamination.
+
 install_claude_code() {
-  local target="$1/.claude"
-  mkdir -p "$target"
-  cp -r "$FRAMEWORK_DIR/.claude/"* "$target/"
-  echo "✓ Claude Code plugin installed to $target"
+  local target="$1"
+  # Claude Code auto-discovers skills from ~/.claude/skills/
+  local skills_dir="$target/.claude/skills/ai-dev-team"
+  mkdir -p "$skills_dir"
+  cp -r "$FRAMEWORK_DIR/platforms/claude-code/skills/"* "$skills_dir/"
+  echo "✓ Claude Code skills installed to $skills_dir"
 }
 
 install_opencode() {
   local target="$1/.opencode"
-  mkdir -p "$target"
-  cp -r "$FRAMEWORK_DIR/.opencode/"* "$target/"
+  mkdir -p "$target/commands" "$target/plugins"
+  cp "$FRAMEWORK_DIR/platforms/opencode/opencode.json" "$target/"
+  cp -r "$FRAMEWORK_DIR/platforms/opencode/commands/" "$target/"
+  cp -r "$FRAMEWORK_DIR/platforms/opencode/plugins/" "$target/"
   echo "✓ OpenCode plugin installed to $target"
 }
 
 install_copilot() {
-  local target="$1/.copilot"
-  mkdir -p "$target"
-  cp -r "$FRAMEWORK_DIR/.copilot/"* "$target/"
-  echo "✓ VS Code Copilot plugin installed to $target"
+  local target="$1"
+  # VS Code Copilot uses .claude/skills/ for Agent Skills (not .copilot/)
+  local claude_dir="$target/.claude"
+  local skills_dir="$claude_dir/skills/ai-dev-team"
+  local commands_dir="$claude_dir/commands"
+
+  mkdir -p "$skills_dir" "$commands_dir"
+
+  # Copy skills from claude-code platform (they're the same skills)
+  cp -r "$FRAMEWORK_DIR/platforms/claude-code/skills/"* "$skills_dir/"
+
+  # Copy slash commands (markdown files in .claude/commands/)
+  cp -r "$FRAMEWORK_DIR/platforms/copilot/commands/" "$claude_dir/"
+
+  echo "✓ VS Code Copilot installed to $claude_dir"
+  echo "  Skills: $skills_dir"
+  echo "  Commands: $commands_dir"
 }
 
 uninstall_all() {
   local target="$1"
-  rm -rf "$target/.claude/ai-dev-team" "$target/.opencode/ai-dev-team" "$target/.copilot/ai-dev-team" 2>/dev/null || true
+  rm -rf "$target/.claude/skills/ai-dev-team" "$target/.claude/commands" "$target/.opencode" 2>/dev/null || true
   echo "✓ Uninstalled all AI Dev Team Framework plugins from $target"
 }
 
@@ -82,6 +102,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ ! -d "$TARGET" ]]; then
+  echo "Error: $TARGET is not a directory"
+  exit 1
+fi
+
 echo "Installing AI Dev Team Framework to $TARGET..."
 echo ""
 
@@ -108,10 +133,9 @@ case "$TOOL" in
 esac
 
 echo ""
-echo "Installation complete!"
-echo "Restart your AI coding tool to activate the framework."
+echo "Installation complete! Restart your AI coding tool to activate."
 echo ""
 echo "Quick start:"
-echo "  Claude Code: /team orchestrator"
-echo "  OpenCode:    /team activate orchestrator"
-echo "  Copilot:     @team orchestrator"
+echo "  Claude Code:  /acl .claude/skills/ai-dev-team"
+echo "  OpenCode:     /orchestrator"
+echo "  VS Code:      Use @agent commands in Copilot chat"
