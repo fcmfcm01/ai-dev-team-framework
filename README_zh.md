@@ -198,13 +198,21 @@ cp -r .copilot/ /path/to/your-project/.copilot
 
 ### OpenCode
 
-`.opencode/` 目录提供 OpenCode CLI 集成。
+`.opencode/` 通过 **JavaScript 插件**和 **Markdown 命令文件**提供 OpenCode CLI 集成。
 
 ```bash
-cp -r .opencode/ /path/to/your-project/.opencode/
+# 方式一：项目级（推荐）
+cp -r .opencode/ /path/to/your-project/
+
+# 方式二：全局安装
+cp -r .opencode/ ~/.config/opencode/
 ```
 
-> 注意：OpenCode 插件格式官方文档较少，使用前请对照官方文档验证。
+**可用命令**（安装后）：`/orchestrator`、`/spec`、`/plan`、`/build`、`/qa`、`/audit`
+
+OpenCode 插件格式：JavaScript 模块位于 `.opencode/plugins/`，Markdown 命令文件位于 `.opencode/commands/`。插件还注册了自定义工具：`ai-dev-team.list-skills`、`ai-dev-team.read-skill`、`ai-dev-team.read-agent`、`ai-dev-team.list-specs`。
+
+详见 `.opencode/SKILL.md`。
 
 ## 与其他框架的对比
 

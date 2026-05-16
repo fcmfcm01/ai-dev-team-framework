@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["ai-dev-team"],
+  "command": {
+    "orchestrator": {
+      "description": "Activate AI Dev Team Framework Orchestrator mode",
+      "agent": "plan"
+    },
+    "spec": {
+      "description": "Create a new spec in .ai-dev/specs/",
+      "agent": "plan"
+    },
+    "plan": {
+      "description": "Break spec into independent tasks",
+      "agent": "plan"
+    },
+    "build": {
+      "description": "Start subagent build pipeline in parallel worktrees",
+      "agent": "build",
+      "subtask": true
+    },
+    "qa": {
+      "description": "Run QA review gate",
+      "agent": "plan"
+    },
+    "audit": {
+      "description": "Run three-round self-audit before delivery",
+      "agent": "plan"
+    }
+  }
+}

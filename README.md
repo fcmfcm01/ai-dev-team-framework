@@ -176,15 +176,21 @@ Plugin manifest: `.copilot/.claude-plugin/plugin.json`
 
 ### OpenCode
 
-The `.opencode/` directory provides OpenCode CLI integration.
+The `.opencode/` directory provides OpenCode CLI integration via **JavaScript plugins** and **Markdown commands**.
 
 ```bash
-cp -r .opencode/ /path/to/your-project/.opencode/
-# Or copy individual files to your OpenCode config directory
+# Option 1: Project-level (recommended)
+cp -r .opencode/ /path/to/your-project/
+
+# Option 2: Global installation
+cp -r .opencode/ ~/.config/opencode/
 ```
 
-Note: OpenCode plugin format is less documented — verify against the official
-OpenCode CLI documentation before relying on this integration.
+**Commands available** (after installation): `/orchestrator`, `/spec`, `/plan`, `/build`, `/qa`, `/audit`
+
+OpenCode plugin format: JavaScript modules in `.opencode/plugins/` + Markdown command files in `.opencode/commands/`. The plugin also registers custom tools: `ai-dev-team.list-skills`, `ai-dev-team.read-skill`, `ai-dev-team.read-agent`, `ai-dev-team.list-specs`.
+
+See `.opencode/SKILL.md` for full documentation.
 
 ## Comparison with Other Frameworks
 
