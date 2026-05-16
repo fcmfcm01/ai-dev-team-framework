@@ -86,3 +86,25 @@ Only offer to create an ADR when all three are true:
 If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
 
 </supporting-info>
+
+---
+
+## Orchestrator Binding
+
+**Source:** [mattpocock/skills](https://github.com/mattpocock/skills) — `skills/engineering/grill-with-docs/`
+
+**Framework integration:**
+
+| Context | Action |
+|---------|--------|
+| Before spec finalization | Activate to stress-test decisions |
+| Ambiguous requirement wording | Activate to sharpen terminology |
+| New domain concept discovered | Update `CONTEXT.md` and flag for `improve-codebase-architecture` |
+| Trade-off decision made | Offer to write an ADR (see `ADR-FORMAT.md` in this skill) |
+
+**Orchestrator protocol:**
+
+1. After spec is drafted → activate `grill-with-docs` before review
+2. Let this skill challenge terminology and decisions in the spec
+3. Crystallised decisions → update `CONTEXT.md` inline
+4. Architectural decisions → offer ADR and hand off to `improve-codebase-architecture`

@@ -28,3 +28,26 @@ The two branches produce very different artifacts — getting this wrong wastes 
 ## When done
 
 The _answer_ is the only thing worth keeping from a prototype. Capture it somewhere durable (commit message, ADR, issue, or a `NOTES.md` next to the prototype) along with the question it was answering. If the user is around, that capture is a quick conversation; if not, leave the placeholder so they (or you, on the next pass) can fill in the verdict before deleting the prototype.
+
+---
+
+## Orchestrator Binding
+
+**Source:** [mattpocock/skills](https://github.com/mattpocock/skills) — `skills/engineering/prototype/`
+
+**Framework integration:**
+
+| Context | Action |
+|---------|--------|
+| Explore unfamiliar territory | Activate this skill |
+| Unclear data model or state machine | Activate this skill |
+| Validate UI design before committing | Activate this skill |
+| Rapid iteration on a design | Activate this skill |
+
+**Orchestrator protocol:**
+
+1. When the orchestrator or any delegated agent encounters an unfamiliar area → activate `prototype`
+2. Use this skill to build throwaway code to answer a specific question
+3. When the prototype has answered the question → delete or fold into real code
+4. Capture the answer (not the prototype code) in the commit message, ADR, or `NOTES.md`
+5. Do NOT leave prototype code rotting in the repo

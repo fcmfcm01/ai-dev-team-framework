@@ -107,3 +107,26 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 [ ] Code is minimal for this test
 [ ] No speculative features added
 ```
+
+---
+
+## Orchestrator Binding
+
+**Source:** [mattpocock/skills](https://github.com/mattpocock/skills) — `skills/engineering/tdd/` (imported as `tdd-deep/`)
+
+**Framework integration:**
+
+| Context | Action |
+|---------|--------|
+| Any feature development | Activate `tdd-deep` before writing feature code |
+| Bug fix | Activate `tdd-deep` (write failing test first) |
+| Red-green-refactor loop requested | Activate `tdd-deep` |
+| Integration test needed | Activate `tdd-deep` |
+
+**Orchestrator protocol:**
+
+1. For any feature or bug fix → dispatch with `tdd-deep` activated
+2. RED phase: write a failing test that describes the desired behaviour
+3. GREEN phase: write minimal code to pass the test
+4. REFACTOR phase: clean up while keeping tests green
+5. See also: `testing` skill for test strategy and automation

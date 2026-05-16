@@ -34,6 +34,10 @@ Skills are reusable, self-contained units of AI agent behavior. Each skill has a
 | [tdd-deep](./engineering/tdd-deep/SKILL.md) | TDD with deep module design | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [zoom-out](./engineering/zoom-out/SKILL.md) | Get broader context | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [prototype](./engineering/prototype/SKILL.md) | Build throwaway prototypes | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [triage](./engineering/triage/SKILL.md) | Issue tracker triage workflow | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [to-issues](./engineering/to-issues/SKILL.md) | Break specs into vertical slices | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [to-prd](./engineering/to-prd/SKILL.md) | Synthesize conversation into PRD | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [testing](./engineering/testing/SKILL.md) | Test strategy and automation | ⚠️ Custom (self-created, not from mattpocock) |
 | [frontend-patterns](./engineering/frontend-patterns/SKILL.md) | React/Vue component patterns | Custom |
 | [backend-patterns](./engineering/backend-patterns/SKILL.md) | API/database patterns | Custom |
 | [api-design](./engineering/api-design/SKILL.md) | REST/GraphQL API design | Custom |

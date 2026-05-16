@@ -304,3 +304,32 @@ function calculateTotal(items: Item[]): number {
 - **Slow tests.** If unit tests take >1s total, something is wrong.
 - **Coverage theater.** High coverage with low-value tests is worthless.
 - **Flaky tests.** Tests that pass/fail randomly destroy trust. Fix or delete them.
+
+---
+
+## Source
+
+**⚠️ Self-created — NOT from mattpocock/skills**
+
+This skill was created by the framework authors and is not derived from [mattpocock/skills](https://github.com/mattpocock/skills). The mattpocock reference does not have a `testing` skill in `skills/engineering/`.
+
+If you are looking for mattpocock's approach to testing, see:
+- [tdd-deep](./tdd-deep/SKILL.md) — TDD with red-green-refactor loop
+- [diagnose](./diagnose/SKILL.md) — debugging test failures
+
+## Orchestrator Binding
+
+**Framework integration:**
+
+| Context | Action |
+|---------|--------|
+| Writing any test | Activate `testing` for test strategy |
+| Setting test coverage targets | Activate `testing` |
+| CI test automation | Activate `testing` |
+| TDD cycle | Use `tdd-deep` skill instead |
+
+**Orchestrator protocol:**
+
+1. When any agent writes tests → activate `testing` for strategy guidance
+2. For TDD workflow → use `tdd-deep` instead
+3. For test failure debugging → use `diagnose` instead
