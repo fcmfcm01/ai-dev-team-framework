@@ -185,16 +185,28 @@ claude --plugin-dir ./ai-dev-team-framework/.claude
 
 ### VS Code Copilot
 
-`.copilot/` 目录提供 VS Code Copilot Agent 插件（预览功能）。
+VS Code Copilot 从 `.claude/skills/`（项目级）或 `~/.claude/skills/`（用户级）自动发现 Agent Skills。
 
 ```bash
-# 复制到目标项目根目录（本地开发/测试）
-cp -r .copilot/ /path/to/your-project/.copilot
+# 方式 1：复制到目标项目（推荐）
+cp -r .claude/skills/ /path/to/your-project/.claude/skills/
+
+# 方式 2：复制到主目录（全局可用）
+cp -r .claude/skills/ ~/.claude/skills/
 ```
 
-需要启用 VS Code Copilot Agent 模式，且组织设置中 `chat.plugins.enabled` 已开启。
+对于 monorepo，在 VS Code 设置中添加：
 
-插件清单：`.copilot/.claude-plugin/plugin.json`
+```json
+{
+  "chat.agentSkillsLocations": [".claude/skills", ".github/skills"],
+  "chat.useCustomizationsInParentRepositories": true
+}
+```
+
+**可用技能：** `/orchestrator`、`/spec`、`/qa`、`/audit`
+
+`.copilot/` 目录提供插件分发辅助工具和文档。`.claude-plugin/plugin.json` 适用于 **Claude Code** 插件格式，而非 VS Code Copilot。
 
 ### OpenCode
 

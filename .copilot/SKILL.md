@@ -1,77 +1,117 @@
----
-name: ai-dev-team
-description: AI Dev Team Framework integration for VS Code Copilot
----
-
-# AI Dev Team Framework — VS Code Copilot Plugin
+# AI Dev Team Framework — VS Code Copilot Integration
 
 ## Overview
 
-This plugin integrates the AI Dev Team Framework into VS Code Copilot Chat sessions. It provides slash commands, skills, and coordination workflows.
+This directory provides two integration layers for VS Code Copilot:
+
+### 1. Skills (`.claude/skills/`)
+
+VS Code Copilot **Agent Skills** in the standard location `.claude/skills/`.
+
+```
+.claude/skills/          ← VS Code Copilot auto-discovers skills here
+├── orchestrator/         # Orchestration coordination
+├── spec-driven/         # Spec-first development
+├── qa-reviewer/         # Multi-axis QA gate
+└── three-round-self-audit/  # Delivery checklist
+```
+
+VS Code Copilot auto-discovers skills stored in:
+- `.claude/skills/` (project-level)
+- `~/.claude/skills/` (user-level)
+- `.github/skills/` (project-level)
+- `.agents/skills/` (project-level)
+- `~/.copilot/skills/` (user-level)
+- `~/.agents/skills/` (user-level)
+
+Each skill directory must contain a `SKILL.md` file with YAML frontmatter:
+
+```yaml
+---
+name: skill-name           # Must match parent directory name
+description: Description of what this skill does and when to use it.
+argument-hint: [optional parameters]
+user-invocable: true      # Show in / menu
+disable-model-invocation: false  # Auto-load by Copilot
+context: inline           # or fork (experimental subagent mode)
+---
+
+# Skill Instructions
+...
+```
+
+### 2. Plugin (`.claude-plugin/`)
+
+For **plugin distribution** (share as a VS Code extension), the `.claude-plugin/` directory contains:
+
+```
+.copilot/.claude-plugin/
+└── plugin.json           # Plugin manifest (not a VS Code package.json)
+```
+
+This is the **Claude Code** plugin format, not VS Code Copilot. For VS Code Copilot plugin distribution, you would need a proper VS Code extension with `package.json` and `chatSkills` contribution point.
 
 ## Installation
 
-### Option 1: From a VS Code Copilot Plugin Marketplace (Recommended when published)
+### For VS Code Copilot (Agent Skills)
+
+**Option 1: Copy skills directory**
+
 ```bash
-# Install from marketplace (example command — depends on marketplace)
+cp -r .claude/skills/ /path/to/your-project/.claude/skills/
 ```
 
-### Option 2: Local Development / Testing
+Or copy into your home directory for global access:
+
 ```bash
-# Copy this plugin directory into your project's .copilot/ folder
-# The plugin is at .copilot/ relative to the framework root
+cp -r .claude/skills/ ~/.claude/skills/
 ```
 
-## Plugin Structure
+**Option 2: Add to VS Code settings (monorepo)**
 
-```
-.copilot/
-├── .claude-plugin/
-│   └── plugin.json       # Plugin manifest (VS Code Copilot plugin format)
-├── skills/               # Skill definitions (delegated to parent framework)
-│   ├── orchestrator/
-│   ├── spec-driven/
-│   ├── qa-reviewer/
-│   └── three-round-self-audit/
-└── commands/            # Slash command definitions
-    ├── orchestrator.md
-    ├── spec.md
-    ├── qa.md
-    └── audit.md
+```json
+{
+  "chat.agentSkillsLocations": [
+    ".claude/skills",
+    ".github/skills"
+  ]
+}
 ```
 
-## Available Commands
+In a monorepo, enable parent repository discovery:
 
-| Command | Description |
-|---------|-------------|
-| `/ai-dev-team:orchestrator` | Activate Orchestrator mode |
-| `/ai-dev-team:spec` | Create a new spec |
-| `/ai-dev-team:qa` | Run QA review gate |
-| `/ai-dev-team:audit` | Run three-round self-audit |
-
-## Example Usage
-
-```
-/ai-dev-team:orchestrator
-Help me add user authentication to the app
-
-/ai-dev-team:spec
-Create a spec for adding OAuth login
-
-/ai-dev-team:qa
-Review the authentication implementation
+```json
+{
+  "chat.useCustomizationsInParentRepositories": true
+}
 ```
 
-## Skills Available
+### For Plugin Distribution
 
-Skills are loaded from `skills/core/` in the parent framework directory:
+The `.claude-plugin/plugin.json` is for **Claude Code** plugin distribution. See the Claude Code documentation for plugin publishing.
 
-- `orchestrator` — Central coordination
-- `spec-driven` — Spec creation pipeline
-- `qa-reviewer` — QA review gate
-- `three-round-self-audit` — Quality self-check
+## Usage
 
-## For Full Framework Content
+After installation, skills appear in VS Code Copilot's `/` menu:
 
-The complete framework (skills, agents, specs) lives in the parent directory.
-This plugin provides VS Code Copilot integration on top of that framework.
+- `/orchestrator` — Activate coordination mode
+- `/spec` — Create a specification
+- `/qa` — Run QA review gate
+- `/audit` — Run three-round self-audit
+
+Or let Copilot auto-load skills based on context.
+
+## Skills Reference
+
+| Skill | Purpose | When to Use |
+|-------|---------|-------------|
+| orchestrator | Team coordination | Multi-file features, cross-cutting concerns |
+| spec-driven | Specification first | Any feature, bug fix, or refactor |
+| qa-reviewer | Quality gate | Before merging or delivering |
+| three-round-self-audit | Delivery checklist | Every delivery |
+
+## Related
+
+- **OpenCode integration**: `.opencode/` — JavaScript plugins + Markdown commands
+- **Claude Code integration**: `.claude/` — Native Claude Code plugin format
+- **Framework docs**: `README.md`, `AGENTS.md`, `skills/README.md`

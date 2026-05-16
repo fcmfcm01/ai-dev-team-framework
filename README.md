@@ -163,16 +163,28 @@ parent framework's `skills/core/` content.
 
 ### VS Code Copilot
 
-The `.copilot/` directory provides a VS Code Copilot Agent Plugin (preview feature).
+VS Code Copilot auto-discovers Agent Skills from `.claude/skills/` (project-level) or `~/.claude/skills/` (user-level).
 
 ```bash
-# Copy into your project root (for local development/testing)
-cp -r .copilot/ /path/to/your-project/.copilot
+# Option 1: Copy skills to your project (recommended)
+cp -r .claude/skills/ /path/to/your-project/.claude/skills/
+
+# Option 2: Copy skills to your home directory (global)
+cp -r .claude/skills/ ~/.claude/skills/
 ```
 
-Requires VS Code with Copilot agent mode enabled and `chat.plugins.enabled` org setting on.
+For monorepos, add to VS Code settings:
 
-Plugin manifest: `.copilot/.claude-plugin/plugin.json`
+```json
+{
+  "chat.agentSkillsLocations": [".claude/skills", ".github/skills"],
+  "chat.useCustomizationsInParentRepositories": true
+}
+```
+
+**Skills available:** `/orchestrator`, `/spec`, `/qa`, `/audit`
+
+The `.copilot/` directory provides plugin distribution helpers and documentation. The `.claude-plugin/plugin.json` is for **Claude Code** plugin format, not VS Code Copilot.
 
 ### OpenCode
 
