@@ -12,14 +12,14 @@ An **Orchestrator-First** AI development team where a coordinating agent dispatc
 
 ```mermaid
 graph TD
-    HP[You (Human Partner)]
-    ORC[Orchestrator Agent<br/>understanding → planning → dispatch]
-    EA[Engineering Agents<br/>frontend · backend · fullstack · qa · devops · sre · security]
-    DA[Design Agents<br/>ux-architect · ui-designer · visual-designer]
-    CS[Core Skills<br/>orchestrator · spec-driven · tdd · qa-reviewer · planning · three-round-self-audit]
-    ES[Engineering Skills<br/>frontend-patterns · backend-patterns · api-design · database · diagnose · tdd-deep · testing]
-    DS[Design Skills<br/>ux-research · visual-design]
-    PP[Platform Plugins<br/>.claude · .opencode · .copilot]
+    HP["You (Human Partner)"]
+    ORC["Orchestrator Agent<br/>understanding → planning → dispatch"]
+    EA["Engineering Agents<br/>frontend · backend · fullstack · qa · devops · sre · security"]
+    DA["Design Agents<br/>ux-architect · ui-designer · visual-designer"]
+    CS["Core Skills<br/>orchestrator · spec-driven · tdd · qa-reviewer · planning · three-round-self-audit"]
+    ES["Engineering Skills<br/>frontend-patterns · backend-patterns · api-design · database · diagnose · tdd-deep · testing"]
+    DS["Design Skills<br/>ux-research · visual-design"]
+    PP["Platform Plugins<br/>.claude · .opencode · .copilot"]
 
     HP --> ORC
     ORC --> EA
@@ -29,9 +29,9 @@ graph TD
     DA --> DS
     ORC --> PP
 
-    EA <-->|parallel worktrees| EA
-    EA <-->|spec review| ORC
-    DA <-->|spec review| ORC
+    EA <-->|"parallel worktrees"| EA
+    EA <-->|"spec review"| ORC
+    DA <-->|"spec review"| ORC
 ```
 
 ### Core Principle: Orchestrator First
@@ -148,20 +148,43 @@ Core skills are tool-agnostic and work with any AI coding harness:
 ## Multi-Platform Support
 
 ### Claude Code
+
 ```bash
-cp -r .claude ~/.claude/  # Or install as plugin
+# Test locally (from project directory)
+claude --plugin-dir ./ai-dev-team-framework/.claude
+
+# Publish to marketplace for team use
+# See: https://code.claude.com/docs/en/plugins
 ```
 
-### OpenCode (OpenAI)
-```bash
-cp -r .opencode ~/Library/Application Support/opencode/  # macOS
-cp -r .opencode ~/.config/opencode/  # Linux
-```
+The `.claude/` directory contains a complete Claude Code plugin with slash commands
+(`/orchestrator`, `/spec`, `/qa`, `/audit`) and skill definitions that reference the
+parent framework's `skills/core/` content.
 
 ### VS Code Copilot
+
+The `.copilot/` directory provides a VS Code Copilot Agent Plugin (preview feature).
+
 ```bash
-cp -r .copilot ~/.config/Claude/  # VS Code Copilot
+# Copy into your project root (for local development/testing)
+cp -r .copilot/ /path/to/your-project/.copilot
 ```
+
+Requires VS Code with Copilot agent mode enabled and `chat.plugins.enabled` org setting on.
+
+Plugin manifest: `.copilot/.claude-plugin/plugin.json`
+
+### OpenCode
+
+The `.opencode/` directory provides OpenCode CLI integration.
+
+```bash
+cp -r .opencode/ /path/to/your-project/.opencode/
+# Or copy individual files to your OpenCode config directory
+```
+
+Note: OpenCode plugin format is less documented — verify against the official
+OpenCode CLI documentation before relying on this integration.
 
 ## Comparison with Other Frameworks
 

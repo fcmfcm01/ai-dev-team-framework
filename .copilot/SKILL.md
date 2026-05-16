@@ -1,5 +1,5 @@
 ---
-name: ai-dev-team-copilot
+name: ai-dev-team
 description: AI Dev Team Framework integration for VS Code Copilot
 ---
 
@@ -7,64 +7,71 @@ description: AI Dev Team Framework integration for VS Code Copilot
 
 ## Overview
 
-This plugin integrates the AI Dev Team Framework into VS Code Copilot Chat sessions.
+This plugin integrates the AI Dev Team Framework into VS Code Copilot Chat sessions. It provides slash commands, skills, and coordination workflows.
 
-## Setup
+## Installation
 
-1. Copy `.copilot/` to your project root
-2. In VS Code, the plugin activates when you mention `/team` in a chat
+### Option 1: From a VS Code Copilot Plugin Marketplace (Recommended when published)
+```bash
+# Install from marketplace (example command — depends on marketplace)
+```
+
+### Option 2: Local Development / Testing
+```bash
+# Copy this plugin directory into your project's .copilot/ folder
+# The plugin is at .copilot/ relative to the framework root
+```
+
+## Plugin Structure
+
+```
+.copilot/
+├── .claude-plugin/
+│   └── plugin.json       # Plugin manifest (VS Code Copilot plugin format)
+├── skills/               # Skill definitions (delegated to parent framework)
+│   ├── orchestrator/
+│   ├── spec-driven/
+│   ├── qa-reviewer/
+│   └── three-round-self-audit/
+└── commands/            # Slash command definitions
+    ├── orchestrator.md
+    ├── spec.md
+    ├── qa.md
+    └── audit.md
+```
 
 ## Available Commands
 
-### `@team orchestrator` — Orchestrator Mode
+| Command | Description |
+|---------|-------------|
+| `/ai-dev-team:orchestrator` | Activate Orchestrator mode |
+| `/ai-dev-team:spec` | Create a new spec |
+| `/ai-dev-team:qa` | Run QA review gate |
+| `/ai-dev-team:audit` | Run three-round self-audit |
+
+## Example Usage
 
 ```
-@team orchestrator
-Help me add user authentication
-```
+/ai-dev-team:orchestrator
+Help me add user authentication to the app
 
-### `@team spec` — Spec Creation
-
-```
-@team spec
+/ai-dev-team:spec
 Create a spec for adding OAuth login
-```
 
-### `@team build` — Build Pipeline
-
-```
-@team build
-Build the authentication feature
-```
-
-### `@team qa` — QA Review
-
-```
-@team qa
+/ai-dev-team:qa
 Review the authentication implementation
-```
-
-## Agent Mentions
-
-Switch to specialized agents:
-
-```
-@frontend-developer Help me build the login form
-@backend-developer Design the auth API endpoints
-@qa-engineer Write tests for the auth flow
-@ux-architect Design the login user flow
 ```
 
 ## Skills Available
 
-The framework skills are automatically loaded in context:
+Skills are loaded from `skills/core/` in the parent framework directory:
 
-- Orchestrator coordination
-- Spec-driven development
-- TDD workflow
-- QA review gates
-- Planning and task breakdown
+- `orchestrator` — Central coordination
+- `spec-driven` — Spec creation pipeline
+- `qa-reviewer` — QA review gate
+- `three-round-self-audit` — Quality self-check
 
-## Spec Location
+## For Full Framework Content
 
-Specs are stored at `.ai-dev/specs/<change-id>/`
+The complete framework (skills, agents, specs) lives in the parent directory.
+This plugin provides VS Code Copilot integration on top of that framework.

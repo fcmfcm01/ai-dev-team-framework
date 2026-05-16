@@ -1,0 +1,50 @@
+{
+  "name": "ai-dev-team",
+  "description": "AI Dev Team Framework — Orchestrator-First multi-agent development methodology",
+  "version": "1.0.0",
+  "author": {
+    "name": "fcmfcm01"
+  },
+  "repository": "https://github.com/fcmfcm01/ai-dev-team-framework",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "orchestrator",
+      "description": "Activate Orchestrator mode — coordinate a team of specialized agents",
+      "skill": "orchestrator"
+    },
+    {
+      "name": "spec",
+      "description": "Create a new spec for a feature or change",
+      "skill": "spec-driven"
+    },
+    {
+      "name": "qa",
+      "description": "Run QA review gate on current implementation",
+      "skill": "qa-reviewer"
+    },
+    {
+      "name": "audit",
+      "description": "Run three-round self-audit before delivery",
+      "skill": "three-round-self-audit"
+    }
+  ],
+  "skills": [
+    {
+      "name": "orchestrator",
+      "path": "skills/orchestrator"
+    },
+    {
+      "name": "spec-driven",
+      "path": "skills/spec-driven"
+    },
+    {
+      "name": "qa-reviewer",
+      "path": "skills/qa-reviewer"
+    },
+    {
+      "name": "three-round-self-audit",
+      "path": "skills/three-round-self-audit"
+    }
+  ]
+}
