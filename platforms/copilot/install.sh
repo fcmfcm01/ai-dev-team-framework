@@ -23,8 +23,8 @@ mkdir -p "$SKILLS_DIR"
 mkdir -p "$CLAUDE_DIR"
 cp -r "$SRC/commands/" "$CLAUDE_DIR/"
 
-# Copy skills
-cp -r "$SRC/../claude-code/skills/" "$SKILLS_DIR/"
+# Copy skills INTO $SKILLS_DIR (not creating a skills/ subdirectory)
+cp -r "$SRC/../claude-code/skills/." "$SKILLS_DIR/"
 
 echo "Installed to: $CLAUDE_DIR"
 echo ""
