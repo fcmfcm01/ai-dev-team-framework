@@ -1,50 +1,32 @@
 # Agents
 
-Specialized AI agents for engineering and design tasks. Each agent is a distinct personality with specific expertise, workflows, and deliverables.
+Agents are specialized AI personas that embody a specific professional role. Each agent has a YAML frontmatter (`name`, `role`, `toolsets`) followed by markdown content describing their expertise, workflows, and interaction patterns.
 
-## Engineering Division
+## Engineering Agents
 
-| Agent | Specialty | Best For |
-|-------|-----------|----------|
-| [frontend-developer](engineering/frontend-developer/) | React/Vue/HTML-CSS | UI features, components |
-| [backend-developer](engineering/backend-developer/) | APIs, databases | Server logic, data pipelines |
-| [fullstack-developer](engineering/fullstack-developer/) | End-to-end | Full feature delivery |
-| [qa-engineer](engineering/qa-engineer/) | Test strategy | Test suites, coverage |
-| [devops-engineer](engineering/devops-engineer/) | CI/CD, infra | Deployments, pipelines |
+| Agent | Role | Source |
+|-------|------|--------|
+| [frontend-developer](./engineering/frontend-developer/AGENT.md) | Frontend specialist (React/Vue/etc.) | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [backend-developer](./engineering/backend-developer/AGENT.md) | Backend architect | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [fullstack-developer](./engineering/fullstack-developer/AGENT.md) | Full-stack generalist | Custom |
+| [qa-engineer](./engineering/qa-engineer/AGENT.md) | Quality assurance | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [security-engineer](./engineering/security-engineer/AGENT.md) | Security analysis | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [devops-engineer](./engineering/devops-engineer/AGENT.md) | DevOps automation | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [sre](./engineering/sre/AGENT.md) | Site reliability | [agency-agents](https://github.com/msitarzewski/agency-agents) |
 
-## Design Division
+## Design Agents
 
-| Agent | Specialty | Best For |
-|-------|-----------|----------|
-| [ux-architect](design/ux-architect/) | User research, flows | Wireframes, personas |
-| [ui-designer](design/ui-designer/) | Components, design systems | UI specs |
-| [visual-designer](design/visual-designer/) | Graphics, branding | Icons, illustrations |
+| Agent | Role | Source |
+|-------|------|--------|
+| [ux-architect](./design/ux-architect/AGENT.md) | UX strategy and research | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [ui-designer](./design/ui-designer/AGENT.md) | UI design and systems | [agency-agents](https://github.com/msitarzewski/agency-agents) |
+| [visual-designer](./design/visual-designer/AGENT.md) | Visual/brand design | [agency-agents](https://github.com/msitarzewski/agency-agents) |
 
-## Agent Format
+## Division Structure
 
-Every agent has:
+- **engineering/** — software development agents
+- **design/** — design and UX agents
 
-```yaml
----
-name: <agent-name>
-role: <engineering|design>
-specialty: <one-line specialty>
----
+## Agent Interaction
 
-# <Agent Name>
-
-## Identity & Personality
-<Who this agent is>
-
-## Expertise
-<What they're good at>
-
-## Workflow
-<How they approach work>
-
-## Deliverables
-<What they produce>
-
-## Communication Style
-<How they report back>
-```
+Agents are dispatched via the `subagent-driven` skill. Each agent operates in isolated context with their specialized skill set. The orchestrator routes tasks to the appropriate agent based on task type.
